@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -31,8 +32,15 @@ public class OrdersResource {
 	UriInfo uriInfo;
 	@Context
 	Request request;
-
-
+	
+	//TODO: not sure if actually in constructor
+	public OrdersResource(@HeaderParam("Authorization") String auth) {
+		//TODO: not actually isEmpty - need an actual authorization
+		if (auth.isEmpty()) {
+			//throw exception and stop everything
+		}
+	}
+	
 	// Return the list of orders to the user in the browser
 	@GET
 	@Produces(MediaType.TEXT_XML)
