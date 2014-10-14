@@ -22,7 +22,7 @@ import com.thegs.coffeeapp.model.Order;
 
 
 
-// will map xxx.xxx.xxx/rest/books
+// will map xxx.xxx.xxx/rest/orders
 @Path("/orders")
 public class OrdersResource {
 	// Allows to insert contextual objects into the class, 
@@ -33,16 +33,16 @@ public class OrdersResource {
 	Request request;
 
 
-	// Return the list of books to the user in the browser
+	// Return the list of orders to the user in the browser
 	@GET
 	@Produces(MediaType.TEXT_XML)
 	public List<Order> getOrdersBrowser() {
-		List<Order> bs = new ArrayList<Order>();
-		bs.addAll( OrderDao.instance.getStore().values() );
-		return bs; 
+		List<Order> os = new ArrayList<Order>();
+		os.addAll( OrderDao.instance.getStore().values() );
+		return os; 
 	}
 	
-	// Return the list of books for client applications/programs
+	// Return the list of orders for client applications/programs
 	@GET
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	public List<Order> getOrders() {
@@ -84,15 +84,15 @@ public class OrdersResource {
 		
 		// Redirect to some HTML page  
 		// You need to create this file under WEB-INF
-		servletResponse.sendRedirect("../create_book.html");
+		servletResponse.sendRedirect("../create_order.html");
 	}
 	
 	
 	// Important to note that this Path annotation define.
-	// This will match xxx.xxx.xxx/rest/books/{book}
-	// It says 'the thing that comes after books/ is a parameter
+	// This will match xxx.xxx.xxx/rest/orders/{order}
+	// It says 'the thing that comes after orders/ is a parameter
 	// and it is passed to the OrderResource class for processing
-	// e.g., http://localhost:8080/cs9322.simple.rest.books/rest/books/3
+	// e.g., http://localhost:8080/cs9322.simple.rest.orders/rest/orders/3
         // This matches this method which returns OrderResource.
 	@Path("{order}")
 	public OrderResource getOrder(

@@ -1,0 +1,78 @@
+package com.thegs.coffeeapp.resources;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Request;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import javax.xml.bind.JAXBElement;
+
+import com.thegs.coffeeapp.dao.PaymentDao;
+import com.thegs.coffeeapp.model.Payment;
+
+
+
+public class PaymentResource {
+	// Allows to insert contextual objects into the class, 
+	// e.g. ServletContext, Request, Response, UriInfo
+	@Context
+	UriInfo uriInfo;
+	@Context
+	Request request;
+	String id;
+	public PaymentResource(UriInfo uriInfo, Request request, String id) {
+		this.uriInfo = uriInfo;
+		this.request = request;
+		this.id = id;
+	}
+	
+	// Produces XML or JSON output for a client 'program'			
+	@GET
+	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	public Payment getPayment() {
+		Payment o = PaymentDao.instance.getStore().get(id);
+		if(o==null)
+			throw new RuntimeException("GET: Payment with" + id +  " not found");
+		return o;
+	}
+	
+	// Produces HTML for browser-based client
+	@GET
+	@Produces(MediaType.TEXT_XML)
+	public Payment getPaymentHTML() {
+		Payment b = PaymentDao.instance.getStore().get(id);
+		if(b==null)
+			throw new RuntimeException("GET: Payment with " + id +  " not found");
+		return b;
+	}
+	
+	@PUT
+	@Consumes(MediaType.APPLICATION_XML)
+	public Response putPayment(JAXBElement<Payment> o) {
+		Payment newO = o.getValue();
+		return putAndGetResponse(newO);
+	}
+	
+	@DELETE
+	public void deletePayment() {
+		Payment delb = PaymentDao.instance.getStore().remove(id);
+		if(delb==null)
+			throw new RuntimeException("DELETE: Payment with " + id +  " not found");
+	}
+	
+	private Response putAndGetResponse(Payment o) {
+		Response res;
+		if(PaymentDao.instance.getStore().containsKey(o.getId())) {
+			res = Response.noContent().build();
+		} else {
+			res = Response.created(uriInfo.getAbsolutePath()).build();
+		}
+		PaymentDao.instance.getStore().put(o.getId(), o);
+		return res;
+	}
+}
