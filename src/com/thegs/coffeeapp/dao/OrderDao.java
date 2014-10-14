@@ -15,10 +15,8 @@ public enum OrderDao {
     private OrderDao() {
 
         Order o = new Order("1", "Latte", "3.70");
-        o.setDetail("http://oreilly.com/catalog/9780596529260");
         contentStore.put(o.getId(), o);
         o = new Order("2", "Capp", "4.50", "Extra Milk");
-        o.setDetail("http://oreilly.com/catalog/9780596158057");
         contentStore.put(o.getId(), o);
     }
     public Map<String, Order> getStore(){

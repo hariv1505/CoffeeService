@@ -15,10 +15,8 @@ public enum PaymentDao {
     private PaymentDao() {
 
         Payment p = new Payment("1", "Cash", "3.70");
-        p.setDetail("http://oreilly.com/catalog/9780596529260");
         contentStore.put(p.getId(), p);
         p = new Payment("2", "Card", "4.50");
-        p.setDetail("http://oreilly.com/catalog/9780596158057");
         p.setCardDetails("123456789");
         contentStore.put(p.getId(), p);
     }

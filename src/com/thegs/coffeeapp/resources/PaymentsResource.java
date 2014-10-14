@@ -77,13 +77,9 @@ public class PaymentsResource {
 			@FormParam("paytype") String pType,
 			@FormParam("amount") String amnt,
 			@FormParam("carddetails") String cardDetails,
-			@FormParam("detail") String detail,
 			@Context HttpServletResponse servletResponse
 	) throws IOException {
 		Payment p = new Payment(id, pType, amnt);
-		if (detail != null){
-			p.setDetail(detail);
-		}
 		if (cardDetails != null){
 			p.setCardDetails(cardDetails);
 		}

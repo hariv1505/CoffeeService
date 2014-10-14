@@ -76,7 +76,6 @@ public class OrdersResource {
 			@FormParam("coffeetype") String cType,
 			@FormParam("cost") String cost,
 			@FormParam("additions") String additions,
-			@FormParam("detail") String detail,
 			@Context HttpServletResponse servletResponse
 	) throws IOException {
 		Order o;
@@ -84,9 +83,6 @@ public class OrdersResource {
 			o = new Order(id, cType,cost, additions);
 		} else {
 			o = new Order(id, cType,cost);
-		}
-		if (detail!=null){
-			o.setDetail(detail);
 		}
 		OrderDao.instance.getStore().put(id, o);
 		
