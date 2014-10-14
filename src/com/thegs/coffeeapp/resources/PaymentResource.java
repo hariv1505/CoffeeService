@@ -35,44 +35,44 @@ public class PaymentResource {
 	@GET
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	public Payment getPayment() {
-		Payment o = PaymentDao.instance.getStore().get(id);
-		if(o==null)
+		Payment p = PaymentDao.instance.getStore().get(id);
+		if(p==null)
 			throw new RuntimeException("GET: Payment with" + id +  " not found");
-		return o;
+		return p;
 	}
 	
 	// Produces HTML for browser-based client
 	@GET
 	@Produces(MediaType.TEXT_XML)
 	public Payment getPaymentHTML() {
-		Payment b = PaymentDao.instance.getStore().get(id);
-		if(b==null)
+		Payment p = PaymentDao.instance.getStore().get(id);
+		if(p==null)
 			throw new RuntimeException("GET: Payment with " + id +  " not found");
-		return b;
+		return p;
 	}
 	
 	@PUT
 	@Consumes(MediaType.APPLICATION_XML)
-	public Response putPayment(JAXBElement<Payment> o) {
-		Payment newO = o.getValue();
-		return putAndGetResponse(newO);
+	public Response putPayment(JAXBElement<Payment> p) {
+		Payment newP = p.getValue();
+		return putAndGetResponse(newP);
 	}
 	
 	@DELETE
 	public void deletePayment() {
-		Payment delb = PaymentDao.instance.getStore().remove(id);
-		if(delb==null)
+		Payment delp = PaymentDao.instance.getStore().remove(id);
+		if(delp==null)
 			throw new RuntimeException("DELETE: Payment with " + id +  " not found");
 	}
 	
-	private Response putAndGetResponse(Payment o) {
+	private Response putAndGetResponse(Payment p) {
 		Response res;
-		if(PaymentDao.instance.getStore().containsKey(o.getId())) {
+		if(PaymentDao.instance.getStore().containsKey(p.getId())) {
 			res = Response.noContent().build();
 		} else {
 			res = Response.created(uriInfo.getAbsolutePath()).build();
 		}
-		PaymentDao.instance.getStore().put(o.getId(), o);
+		PaymentDao.instance.getStore().put(p.getId(), p);
 		return res;
 	}
 }

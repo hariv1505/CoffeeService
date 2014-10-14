@@ -45,10 +45,10 @@ public class OrderResource {
 	@GET
 	@Produces(MediaType.TEXT_XML)
 	public Order getOrderHTML() {
-		Order b = OrderDao.instance.getStore().get(id);
-		if(b==null)
+		Order o = OrderDao.instance.getStore().get(id);
+		if(o==null)
 			throw new RuntimeException("GET: Order with " + id +  " not found");
-		return b;
+		return o;
 	}
 	
 	@PUT

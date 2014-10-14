@@ -37,18 +37,18 @@ public class PaymentsResource {
 	@GET
 	@Produces(MediaType.TEXT_XML)
 	public List<Payment> getPaymentsBrowser() {
-		List<Payment> bs = new ArrayList<Payment>();
-		bs.addAll( PaymentDao.instance.getStore().values() );
-		return bs; 
+		List<Payment> ps = new ArrayList<Payment>();
+		ps.addAll( PaymentDao.instance.getStore().values() );
+		return ps; 
 	}
 	
 	// Return the list of payments for client applications/programs
 	@GET
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	public List<Payment> getPayments() {
-		List<Payment> os = new ArrayList<Payment>();
-		os.addAll( PaymentDao.instance.getStore().values() );
-		return os; 
+		List<Payment> ps = new ArrayList<Payment>();
+		ps.addAll( PaymentDao.instance.getStore().values() );
+		return ps; 
 	}
 	
 	@GET
