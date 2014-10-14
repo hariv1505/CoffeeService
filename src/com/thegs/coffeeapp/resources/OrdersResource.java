@@ -17,14 +17,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.UriInfo;
 
-import com.thegs.coffeeapp.dao.CoffeeDao;
-import com.thegs.coffeeapp.model.Coffee;
+import com.thegs.coffeeapp.dao.OrderDao;
+import com.thegs.coffeeapp.model.Order;
 
 
 
 // will map xxx.xxx.xxx/rest/books
-@Path("/books")
-public class CoffeesResource {
+@Path("/orders")
+public class OrdersResource {
 	// Allows to insert contextual objects into the class, 
 	// e.g. ServletContext, Request, Response, UriInfo
 	@Context
@@ -36,26 +36,26 @@ public class CoffeesResource {
 	// Return the list of books to the user in the browser
 	@GET
 	@Produces(MediaType.TEXT_XML)
-	public List<Coffee> getBooksBrowser() {
-		List<Coffee> bs = new ArrayList<Coffee>();
-		bs.addAll( CoffeeDao.instance.getStore().values() );
+	public List<Order> getOrdersBrowser() {
+		List<Order> bs = new ArrayList<Order>();
+		bs.addAll( OrderDao.instance.getStore().values() );
 		return bs; 
 	}
 	
 	// Return the list of books for client applications/programs
 	@GET
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public List<Coffee> getBooks() {
-		List<Coffee> bs = new ArrayList<Coffee>();
-		bs.addAll( CoffeeDao.instance.getStore().values() );
-		return bs; 
+	public List<Order> getOrders() {
+		List<Order> os = new ArrayList<Order>();
+		os.addAll( OrderDao.instance.getStore().values() );
+		return os; 
 	}
 	
 	@GET
 	@Path("count")
 	@Produces(MediaType.TEXT_PLAIN)
 	public String getCount() {
-		int count = CoffeeDao.instance.getStore().size();
+		int count = OrderDao.instance.getStore().size();
 		return String.valueOf(count);
 	}
 	
@@ -63,17 +63,24 @@ public class CoffeesResource {
 	@POST
 	@Produces(MediaType.TEXT_HTML)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public void newBook(
+	public void newOrder(
 			@FormParam("id") String id,
-			@FormParam("title") String title,
+			@FormParam("coffeetype") String cType,
+			@FormParam("cost") String cost,
+			@FormParam("additions") String additions,
 			@FormParam("detail") String detail,
 			@Context HttpServletResponse servletResponse
 	) throws IOException {
-		Coffee b = new Coffee(id,title);
-		if (detail!=null){
-			b.setDetail(detail);
+		Order o;
+		if (additions != null) {
+			o = new Order(id, cType,cost, additions);
+		} else {
+			o = new Order(id, cType,cost);
 		}
-		CoffeeDao.instance.getStore().put(id, b);
+		if (detail!=null){
+			o.setDetail(detail);
+		}
+		OrderDao.instance.getStore().put(id, o);
 		
 		// Redirect to some HTML page  
 		// You need to create this file under WEB-INF
@@ -84,13 +91,13 @@ public class CoffeesResource {
 	// Important to note that this Path annotation define.
 	// This will match xxx.xxx.xxx/rest/books/{book}
 	// It says 'the thing that comes after books/ is a parameter
-	// and it is passed to the BookResource class for processing
+	// and it is passed to the OrderResource class for processing
 	// e.g., http://localhost:8080/cs9322.simple.rest.books/rest/books/3
-        // This matches this method which returns BookResource.
-	@Path("{book}")
-	public CoffeeResource getBook(
-			@PathParam("book") String id) {
-		return new CoffeeResource(uriInfo, request, id);
+        // This matches this method which returns OrderResource.
+	@Path("{order}")
+	public OrderResource getOrder(
+			@PathParam("order") String id) {
+		return new OrderResource(uriInfo, request, id);
 	}
 	
 }

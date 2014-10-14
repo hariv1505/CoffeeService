@@ -12,12 +12,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.JAXBElement;
 
-import com.thegs.coffeeapp.dao.CoffeeDao;
-import com.thegs.coffeeapp.model.Coffee;
+import com.thegs.coffeeapp.dao.OrderDao;
+import com.thegs.coffeeapp.model.Order;
 
 
 
-public class CoffeeResource {
+public class OrderResource {
 	// Allows to insert contextual objects into the class, 
 	// e.g. ServletContext, Request, Response, UriInfo
 	@Context
@@ -25,7 +25,7 @@ public class CoffeeResource {
 	@Context
 	Request request;
 	String id;
-	public CoffeeResource(UriInfo uriInfo, Request request, String id) {
+	public OrderResource(UriInfo uriInfo, Request request, String id) {
 		this.uriInfo = uriInfo;
 		this.request = request;
 		this.id = id;
@@ -34,45 +34,45 @@ public class CoffeeResource {
 	// Produces XML or JSON output for a client 'program'			
 	@GET
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Coffee getBook() {
-		Coffee b = CoffeeDao.instance.getStore().get(id);
-		if(b==null)
-			throw new RuntimeException("GET: Book with" + id +  " not found");
-		return b;
+	public Order getOrder() {
+		Order o = OrderDao.instance.getStore().get(id);
+		if(o==null)
+			throw new RuntimeException("GET: Order with" + id +  " not found");
+		return o;
 	}
 	
 	// Produces HTML for browser-based client
 	@GET
 	@Produces(MediaType.TEXT_XML)
-	public Coffee getBookHTML() {
-		Coffee b = CoffeeDao.instance.getStore().get(id);
+	public Order getOrderHTML() {
+		Order b = OrderDao.instance.getStore().get(id);
 		if(b==null)
-			throw new RuntimeException("GET: Book with " + id +  " not found");
+			throw new RuntimeException("GET: Order with " + id +  " not found");
 		return b;
 	}
 	
 	@PUT
 	@Consumes(MediaType.APPLICATION_XML)
-	public Response putBook(JAXBElement<Coffee> b) {
-		Coffee newb = b.getValue();
-		return putAndGetResponse(newb);
+	public Response putOrder(JAXBElement<Order> o) {
+		Order newO = o.getValue();
+		return putAndGetResponse(newO);
 	}
 	
 	@DELETE
-	public void deleteBook() {
-		Coffee delb = CoffeeDao.instance.getStore().remove(id);
+	public void deleteOrder() {
+		Order delb = OrderDao.instance.getStore().remove(id);
 		if(delb==null)
-			throw new RuntimeException("DELETE: Book with " + id +  " not found");
+			throw new RuntimeException("DELETE: Order with " + id +  " not found");
 	}
 	
-	private Response putAndGetResponse(Coffee b) {
+	private Response putAndGetResponse(Order o) {
 		Response res;
-		if(CoffeeDao.instance.getStore().containsKey(b.getId())) {
+		if(OrderDao.instance.getStore().containsKey(o.getId())) {
 			res = Response.noContent().build();
 		} else {
 			res = Response.created(uriInfo.getAbsolutePath()).build();
 		}
-		CoffeeDao.instance.getStore().put(b.getId(), b);
+		OrderDao.instance.getStore().put(o.getId(), o);
 		return res;
 	}
 }
