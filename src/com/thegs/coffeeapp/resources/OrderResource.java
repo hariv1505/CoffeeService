@@ -35,7 +35,8 @@ public class OrderResource {
 	@GET
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	public Order getOrder() {
-		Order o = OrderDao.instance.getStore().get(id);
+		OrderDao ord = new OrderDao();
+		Order o = ord.getOrderById(id);
 		if(o==null)
 			throw new RuntimeException("GET: Order with" + id +  " not found");
 		return o;
@@ -45,13 +46,14 @@ public class OrderResource {
 	@GET
 	@Produces(MediaType.TEXT_XML)
 	public Order getOrderHTML() {
-		Order o = OrderDao.instance.getStore().get(id);
+		OrderDao ord = new OrderDao();
+		Order o = ord.getOrderById(id);
 		if(o==null)
 			throw new RuntimeException("GET: Order with " + id +  " not found");
 		return o;
 	}
 	
-	@PUT
+	/*@PUT
 	@Consumes(MediaType.APPLICATION_XML)
 	public Response putOrder(JAXBElement<Order> o) {
 		Order newO = o.getValue();
@@ -74,5 +76,5 @@ public class OrderResource {
 		}
 		OrderDao.instance.getStore().put(o.getId(), o);
 		return res;
-	}
+	}*/
 }

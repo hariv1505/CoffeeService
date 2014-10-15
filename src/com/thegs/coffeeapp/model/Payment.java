@@ -1,13 +1,21 @@
 package com.thegs.coffeeapp.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
+@Entity
+@Table(name="payments")
 public class Payment {
-
+	@Id
     private String id;
+	@Column(name = "pay_type")
     private String payType;
     private String amount;
+    @Column(name = "card_details")
     private String cardDetails;
     private String detail;
 

@@ -1,11 +1,18 @@
 package com.thegs.coffeeapp.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
+@Entity
+@Table(name="orders")
 public class Order {
-
+	@Id
     private String id;
+	 @Column(name = "coffee_type")
     private String coffeeType;
     private String cost;
     private String additions;

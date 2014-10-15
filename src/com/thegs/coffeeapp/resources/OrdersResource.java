@@ -34,14 +34,14 @@ public class OrdersResource {
 	Request request;
 	
 	//TODO: not sure if actually in constructor
-	public OrdersResource(@HeaderParam("Authorization") String auth) {
-		//TODO: not actually isEmpty - need an actual authorization
-		if (auth.isEmpty()) {
-			//throw exception and stop everything
-		}
-	}
+//	public OrdersResource(@HeaderParam("Authorization") String auth) {
+//		//TODO: not actually isEmpty - need an actual authorization
+//		if (auth.isEmpty()) {
+//			//throw exception and stop everything
+//		}
+//	}
 	
-	// Return the list of orders to the user in the browser
+/*	// Return the list of orders to the user in the browser
 	@GET
 	@Produces(MediaType.TEXT_XML)
 	public List<Order> getOrdersBrowser() {
@@ -65,7 +65,7 @@ public class OrdersResource {
 	public String getCount() {
 		int count = OrderDao.instance.getStore().size();
 		return String.valueOf(count);
-	}
+	}*/
 	
         // Client should set Content Type accordingly
 	@POST
@@ -84,7 +84,8 @@ public class OrdersResource {
 		} else {
 			o = new Order(id, cType,cost);
 		}
-		OrderDao.instance.getStore().put(id, o);
+		OrderDao ord = new OrderDao();
+		ord.addOrder(o);
 		
 		// Redirect to some HTML page  
 		// You need to create this file under WEB-INF
