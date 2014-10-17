@@ -53,6 +53,16 @@ public class OrderResource {
 		return o;
 	}
 	
+	@DELETE
+	public void deleteOrder() {
+		OrderDao ord = new OrderDao();
+		Order o = ord.getOrderById(id);
+		if(o==null)
+			throw new RuntimeException("DELETE: Order with " + id +  " not found");
+		else
+			ord.deleteOrder(o);
+	}
+	
 	/*@PUT
 	@Consumes(MediaType.APPLICATION_XML)
 	public Response putOrder(JAXBElement<Order> o) {

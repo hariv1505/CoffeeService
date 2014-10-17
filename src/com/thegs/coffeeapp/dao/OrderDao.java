@@ -59,5 +59,12 @@ public class OrderDao {
 			else
 				return null;
     }
+	
+	public void deleteOrder(Order o) {
+		session.beginTransaction();
+		session.delete(o);
+		session.getTransaction().commit();
+        session.close();
+	}
 
 }
