@@ -41,31 +41,29 @@ public class OrdersResource {
 //		}
 //	}
 	
-/*	// Return the list of orders to the user in the browser
+	// Return the list of orders to the user in the browser
 	@GET
 	@Produces(MediaType.TEXT_XML)
 	public List<Order> getOrdersBrowser() {
-		List<Order> os = new ArrayList<Order>();
-		os.addAll( OrderDao.instance.getStore().values() );
-		return os; 
+		OrderDao ord = new OrderDao();
+		return ord.getAllOrders(); 
 	}
 	
 	// Return the list of orders for client applications/programs
 	@GET
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	public List<Order> getOrders() {
-		List<Order> os = new ArrayList<Order>();
-		os.addAll( OrderDao.instance.getStore().values() );
-		return os; 
-	}
+		OrderDao ord = new OrderDao();
+		return ord.getAllOrders();	}
 	
 	@GET
 	@Path("count")
 	@Produces(MediaType.TEXT_PLAIN)
 	public String getCount() {
-		int count = OrderDao.instance.getStore().size();
+		OrderDao ord = new OrderDao();
+		int count = ord.getAllOrders().size();
 		return String.valueOf(count);
-	}*/
+	}
 	
         // Client should set Content Type accordingly
 	@POST
@@ -80,9 +78,9 @@ public class OrdersResource {
 	) throws IOException {
 		Order o;
 		if (additions != null) {
-			o = new Order(id, cType,cost, additions);
+			o = new Order(id, cType, cost, additions);
 		} else {
-			o = new Order(id, cType,cost);
+			o = new Order(id, cType, cost);
 		}
 		OrderDao ord = new OrderDao();
 		ord.addOrder(o);

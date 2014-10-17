@@ -70,12 +70,6 @@ public class OrderResource {
 		return putAndGetResponse(newO);
 	}
 	
-	@DELETE
-	public void deleteOrder() {
-		Order delb = OrderDao.instance.getStore().remove(id);
-		if(delb==null)
-			throw new RuntimeException("DELETE: Order with " + id +  " not found");
-	}
 	
 	private Response putAndGetResponse(Order o) {
 		Response res;

@@ -1,6 +1,8 @@
 package com.thegs.coffeeapp.dao;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.logging.Logger;
@@ -58,6 +60,18 @@ public class OrderDao {
 			}
 			else
 				return null;
+    }
+	
+	public List<Order> getAllOrders() {
+		Query query = session.createQuery("from Order");
+		List<Order> orderList = new ArrayList<Order>();
+		java.util.List allOrders;
+		allOrders = query.list();
+		  for (int i = 0; i < allOrders.size(); i++) {
+			  Order order = (Order) allOrders.get(i);
+			  orderList.add(order);
+		  }
+        return orderList;
     }
 	
 	public void deleteOrder(Order o) {
