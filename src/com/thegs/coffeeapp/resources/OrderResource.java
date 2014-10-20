@@ -63,7 +63,7 @@ public class OrderResource {
 			ord.deleteOrder(o);
 	}
 	
-	/*@PUT
+	@PUT
 	@Consumes(MediaType.APPLICATION_XML)
 	public Response putOrder(JAXBElement<Order> o) {
 		Order newO = o.getValue();
@@ -71,14 +71,16 @@ public class OrderResource {
 	}
 	
 	
-	private Response putAndGetResponse(Order o) {
+	private Response putAndGetResponse(Order newOrder) {
 		Response res;
-		if(OrderDao.instance.getStore().containsKey(o.getId())) {
+		OrderDao ord = new OrderDao();
+		ord.updateOrder(newOrder);
+		//res not working correctly
+		if(ord.getOrderById(newOrder.getId()) != null) {
 			res = Response.noContent().build();
 		} else {
 			res = Response.created(uriInfo.getAbsolutePath()).build();
 		}
-		OrderDao.instance.getStore().put(o.getId(), o);
 		return res;
-	}*/
+	}
 }

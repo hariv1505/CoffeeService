@@ -34,7 +34,6 @@ public class OrderDao {
         session = sessionFactory.openSession();
         log.info("Connection with the database created successfuly");
         
-        
     }
 	public void addOrder(Order order) {
 
@@ -42,11 +41,24 @@ public class OrderDao {
 
         //parameter checks
 
-        session.saveOrUpdate(order);
+        session.save(order);
         session.getTransaction().commit();
         session.close();
         
         log.info("Created order with id: " + order.getId());
+    }
+	
+	public void updateOrder(Order newOrder) {
+
+        session.beginTransaction();
+
+        //parameter checks
+        
+        session.update(newOrder);
+        session.getTransaction().commit();
+        session.close();
+        
+        log.info("Updated order with id: " + newOrder.getId());
     }
 	
 	public Order getOrderById(String id) {
