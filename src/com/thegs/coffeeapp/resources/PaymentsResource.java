@@ -10,6 +10,7 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -34,12 +35,12 @@ public class PaymentsResource {
 	Request request;
 	
 	//TODO: not sure if actually in constructor
-	public PaymentsResource(@HeaderParam("Authorization") String auth) {
+	/*public PaymentsResource(@HeaderParam("Authorization") String auth) {
 		//TODO: not actually isEmpty - need an actual authorization
 		if (auth.isEmpty()) {
 			//throw exception and stop everything
 		}
-	}
+	}*/
 
 
 	// Return the list of payments to the user in the browser
@@ -68,8 +69,8 @@ public class PaymentsResource {
 		return String.valueOf(count);
 	}
 	
-        // Client should set Content Type accordingly
-	@POST
+    // Client should set Content Type accordingly
+	@PUT
 	@Produces(MediaType.TEXT_HTML)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public void newPayment(
@@ -87,7 +88,7 @@ public class PaymentsResource {
 		
 		// Redirect to some HTML page  
 		// You need to create this file under WEB-INF
-		servletResponse.sendRedirect("../create_payment.html");
+		servletResponse.sendRedirect(id);
 	}
 	
 	

@@ -48,7 +48,7 @@ public class OrderDao {
         log.info("Created order with id: " + order.getId());
     }
 	
-	public void updateOrder(Order newOrder) {
+	public String updateOrder(Order newOrder) {
 
         session.beginTransaction();
 
@@ -59,6 +59,8 @@ public class OrderDao {
         session.close();
         
         log.info("Updated order with id: " + newOrder.getId());
+        
+        return newOrder.getId();
     }
 	
 	public Order getOrderById(String id) {
