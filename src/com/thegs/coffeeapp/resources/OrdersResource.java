@@ -145,7 +145,7 @@ public class OrdersResource {
 		//TODO: return code
 		//look at this for details 
 		//http://www.javamex.com/tutorials/servlets/http_status_code.shtml
-		servletResponse.setStatus("200");	
+		servletResponse.setStatus(200);	
 		//HttpServletResponse.)
 	}
 	
