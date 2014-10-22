@@ -90,7 +90,7 @@ public class OrdersResource {
 		
 		// Redirect to some HTML page  
 		// You need to create this file under WEB-INF
-		servletResponse.sendRedirect("../create_order.html");
+		servletResponse.sendRedirect("../ordercreated.html");
 	}
 	
 	
@@ -107,53 +107,6 @@ public class OrdersResource {
 		return new OrderResource(uriInfo, request, id);
 	}
 	
-	@PUT
-	@Produces(MediaType.TEXT_HTML)
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public void updateOrder(
-			@FormParam("id") String id,
-			@FormParam("coffeetype") String cType,
-			@FormParam("cost") String cost,
-			@FormParam("additions") String additions,
-			@Context HttpServletResponse servletResponse
-	) throws IOException {
-		OrderDao ord = new OrderDao();
-		
-		Order o = ord.getOrderById(id);
-		 
-		if (additions != null) {
-			o = new Order(id, cType, cost, additions);
-		} else {
-			o = new Order(id, cType, cost);
-		}
-		
-		String ans = ord.updateOrder(o);
-		
-		servletResponse.sendRedirect(ans);
-	}
 	
-	@DELETE
-	@Produces(MediaType.TEXT_HTML)
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Path("{order}")
-	public void deleteOrder(
-			@PathParam("order") String id,
-			@Context HttpServletResponse servletResponse) {
-		OrderDao ord = new OrderDao();
-		Order o = ord.getOrderById(id);
-		ord.deleteOrder(o);
-		//TODO: return code
-		//look at this for details 
-		//http://www.javamex.com/tutorials/servlets/http_status_code.shtml
-		servletResponse.setStatus(200);	
-		//HttpServletResponse.)
-	}
 	
-	@OPTIONS
-	@Produces(MediaType.TEXT_HTML)
-	@Path("options")
-	public void getOptions() {
-		//TODO change answer depending on status
-		
-	}
 }

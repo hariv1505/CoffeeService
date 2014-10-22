@@ -34,6 +34,8 @@ public class PaymentsResource {
 	@Context
 	Request request;
 	
+	PaymentDao payDao = new PaymentDao();
+	
 	//TODO: not sure if actually in constructor
 	/*public PaymentsResource(@HeaderParam("Authorization") String auth) {
 		//TODO: not actually isEmpty - need an actual authorization
@@ -47,48 +49,21 @@ public class PaymentsResource {
 	@GET
 	@Produces(MediaType.TEXT_XML)
 	public List<Payment> getPaymentsBrowser() {
-		List<Payment> ps = new ArrayList<Payment>();
-		ps.addAll( PaymentDao.instance.getStore().values() );
-		return ps; 
+		return payDao.getAllPayments();
 	}
 	
 	// Return the list of payments for client applications/programs
 	@GET
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	public List<Payment> getPayments() {
-		List<Payment> ps = new ArrayList<Payment>();
-		ps.addAll( PaymentDao.instance.getStore().values() );
-		return ps; 
+		return payDao.getAllPayments(); 
 	}
 	
 	@GET
 	@Path("count")
 	@Produces(MediaType.TEXT_PLAIN)
 	public String getCount() {
-		int count = PaymentDao.instance.getStore().size();
-		return String.valueOf(count);
-	}
-	
-    // Client should set Content Type accordingly
-	@PUT
-	@Produces(MediaType.TEXT_HTML)
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public void newPayment(
-			@FormParam("id") String id,
-			@FormParam("paytype") String pType,
-			@FormParam("amount") String amnt,
-			@FormParam("carddetails") String cardDetails,
-			@Context HttpServletResponse servletResponse
-	) throws IOException {
-		Payment p = new Payment(id, pType, amnt);
-		if (cardDetails != null){
-			p.setCardDetails(cardDetails);
-		}
-		PaymentDao.instance.getStore().put(id, p);
-		
-		// Redirect to some HTML page  
-		// You need to create this file under WEB-INF
-		servletResponse.sendRedirect(id);
+		return String.valueOf(payDao.getAllPayments().size());
 	}
 	
 	
