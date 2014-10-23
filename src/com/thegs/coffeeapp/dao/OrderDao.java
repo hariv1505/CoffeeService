@@ -48,7 +48,7 @@ public class OrderDao {
         log.info("Created order with id: " + order.getId());
     }
 	
-	public String updateOrder(Order newOrder) {
+	public void updateOrder(Order newOrder) {
 
         session.beginTransaction();
 
@@ -59,28 +59,28 @@ public class OrderDao {
         session.close();
         
         log.info("Updated order with id: " + newOrder.getId());
-        
-        return newOrder.getId();
     }
 	
 	public Order getOrderById(String id) {
 		Query query = session.createQuery("from Order where id=:id");
 		query.setParameter("id", id);
-		List<Order> order = query.list();
-		
-		if(order.size() > 0) {
-			Order o = (order.get(0));
-			return o;
-		} else return null;
+		java.util.List order;
+		order = query.list();
+		   if(order.size() > 0) {
+				Order o = (Order) (order.get(0));
+				return o;
+			}
+			else
+				return null;
     }
 	
-	//TODO: why can't we just return query.list()?
 	public List<Order> getAllOrders() {
 		Query query = session.createQuery("from Order");
 		List<Order> orderList = new ArrayList<Order>();
-		List<Order> allOrders = query.list();
+		java.util.List allOrders;
+		allOrders = query.list();
 		  for (int i = 0; i < allOrders.size(); i++) {
-			  Order order = allOrders.get(i);
+			  Order order = (Order) allOrders.get(i);
 			  orderList.add(order);
 		  }
         return orderList;

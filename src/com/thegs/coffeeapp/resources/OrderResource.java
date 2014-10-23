@@ -1,12 +1,9 @@
 package com.thegs.coffeeapp.resources;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.OPTIONS;
 import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -47,7 +44,7 @@ public class OrderResource {
 	
 	// Produces HTML for browser-based client
 	@GET
-	@Produces({MediaType.TEXT_XML, MediaType.TEXT_HTML})
+	@Produces(MediaType.TEXT_XML)
 	public Order getOrderHTML() {
 		OrderDao ord = new OrderDao();
 		Order o = ord.getOrderById(id);
@@ -57,51 +54,33 @@ public class OrderResource {
 	}
 	
 	@DELETE
-	//TODO: changed method signature - added argument
-	public void deleteOrder(@Context HttpServletResponse servletResponse) {
+	public void deleteOrder() {
 		OrderDao ord = new OrderDao();
 		Order o = ord.getOrderById(id);
 		if(o==null)
 			throw new RuntimeException("DELETE: Order with " + id +  " not found");
-			//TODO: status codes?
-		else {
+		else
 			ord.deleteOrder(o);
-			//TODO: return code - see if this works
-			//look at this for details 
-			//http://www.javamex.com/tutorials/servlets/http_status_code.shtml
-			servletResponse.setStatus(200);	
-			//HttpServletResponse.)
-		}
 	}
 	
 	@PUT
 	@Consumes(MediaType.APPLICATION_XML)
 	public Response putOrder(JAXBElement<Order> o) {
 		Order newO = o.getValue();
+		return putAndGetResponse(newO);
+	}
+	
+	
+	private Response putAndGetResponse(Order newOrder) {
 		Response res;
 		OrderDao ord = new OrderDao();
-		String newId = ord.updateOrder(newO);
+		ord.updateOrder(newOrder);
 		//res not working correctly
-		if(ord.getOrderById(newId) != null) {
+		if(ord.getOrderById(newOrder.getId()) != null) {
 			res = Response.noContent().build();
 		} else {
-			//TODO: do not understand this
 			res = Response.created(uriInfo.getAbsolutePath()).build();
 		}
 		return res;
-	}
-	
-	//TODO: getting rid of this
-	//private Response putAndGetResponse(Order newOrder) {
-	//	
-	//}
-	
-	@OPTIONS
-	@Produces(MediaType.TEXT_HTML)
-	@Path("options")		//TODO: are we allowed to do this? :S
-	public void getOptions() {
-		//TODO change answer depending on status
-		// no idea how to do this
-		
 	}
 }

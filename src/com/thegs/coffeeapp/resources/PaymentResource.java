@@ -3,9 +3,7 @@ package com.thegs.coffeeapp.resources;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.OPTIONS;
 import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -27,19 +25,17 @@ public class PaymentResource {
 	@Context
 	Request request;
 	String id;
-	PaymentDao payDao;
 	public PaymentResource(UriInfo uriInfo, Request request, String id) {
 		this.uriInfo = uriInfo;
 		this.request = request;
 		this.id = id;
-		this.payDao = new PaymentDao();
 	}
 	
 	// Produces XML or JSON output for a client 'program'			
 	@GET
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	public Payment getPayment() {
-		Payment p = payDao.getPaymentById(id);
+		Payment p = PaymentDao.instance.getStore().get(id);
 		if(p==null)
 			throw new RuntimeException("GET: Payment with" + id +  " not found");
 		return p;
@@ -49,7 +45,7 @@ public class PaymentResource {
 	@GET
 	@Produces(MediaType.TEXT_XML)
 	public Payment getPaymentHTML() {
-		Payment p = payDao.getPaymentById(id);
+		Payment p = PaymentDao.instance.getStore().get(id);
 		if(p==null)
 			throw new RuntimeException("GET: Payment with " + id +  " not found");
 		return p;
@@ -59,30 +55,24 @@ public class PaymentResource {
 	@Consumes(MediaType.APPLICATION_XML)
 	public Response putPayment(JAXBElement<Payment> p) {
 		Payment newP = p.getValue();
+		return putAndGetResponse(newP);
+	}
+	
+	@DELETE
+	public void deletePayment() {
+		Payment delp = PaymentDao.instance.getStore().remove(id);
+		if(delp==null)
+			throw new RuntimeException("DELETE: Payment with " + id +  " not found");
+	}
+	
+	private Response putAndGetResponse(Payment p) {
 		Response res;
-		if(payDao.getPaymentById(id) == null) {
+		if(PaymentDao.instance.getStore().containsKey(p.getId())) {
 			res = Response.noContent().build();
 		} else {
 			res = Response.created(uriInfo.getAbsolutePath()).build();
 		}
-		payDao.deletePayment(payDao.getPaymentById(id));
-		payDao.addPayment(newP);
-		
+		PaymentDao.instance.getStore().put(p.getId(), p);
 		return res;
-	}
-	
-	//TODO getting rid of this
-	//private Response putAndGetResponse(Payment p) {
-	//	
-	//	
-	//}
-	
-	@OPTIONS
-	@Produces(MediaType.TEXT_HTML)
-	@Path("options")		//TODO: are we allowed to do this? :S
-	public void getOptions() {
-		//TODO change answer depending on status
-		// no idea how to do this
-		
 	}
 }
