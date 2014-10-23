@@ -1,5 +1,6 @@
 package com.thegs.coffeeapp.resources;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
