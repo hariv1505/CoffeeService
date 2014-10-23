@@ -87,7 +87,9 @@ public class OrdersResource {
 		
 		// Redirect to some HTML page  
 		// You need to create this file under WEB-INF
-		servletResponse.sendRedirect("../create_order.html");
+		servletResponse.setHeader("cost", cost);
+		servletResponse.setHeader("uri", "/orders/" + id);
+		//servletResponse.sendRedirect("../create_order.html");
 	}
 	
 	

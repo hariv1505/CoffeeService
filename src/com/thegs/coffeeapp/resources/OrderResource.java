@@ -9,6 +9,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.JAXBElement;
 
@@ -54,32 +55,40 @@ public class OrderResource {
 	}
 	
 	@DELETE
-	public void deleteOrder() {
+	public String deleteOrder() {
 		OrderDao ord = new OrderDao();
 		Order o = ord.getOrderById(id);
-		if(o==null)
-			throw new RuntimeException("DELETE: Order with " + id +  " not found");
-		else
+		if (o!=null) {
 			ord.deleteOrder(o);
+			return "200";
+		} else {
+			new RuntimeException("DELETE: Order with " + id +  " not found").printStackTrace();
+			return "404";
+		}
 	}
 	
 	@PUT
 	@Consumes(MediaType.APPLICATION_XML)
-	public Response putOrder(JAXBElement<Order> o) {
+	public Order putOrder(JAXBElement<Order> o) {
 		Order newO = o.getValue();
-		return putAndGetResponse(newO);
+		Response r = putAndGetResponse(newO);
+		if (r.getStatus() == 201) {
+			return newO;
+		} else {
+			throw new RuntimeException("UPDATE: Error " + r.getStatus());
+		}
 	}
 	
 	
 	private Response putAndGetResponse(Order newOrder) {
 		Response res;
 		OrderDao ord = new OrderDao();
-		ord.updateOrder(newOrder);
 		//res not working correctly
-		if(ord.getOrderById(newOrder.getId()) != null) {
+		if(ord.getOrderById(newOrder.getId()) == null) {
 			res = Response.noContent().build();
 		} else {
 			res = Response.created(uriInfo.getAbsolutePath()).build();
+			ord.updateOrder(newOrder);
 		}
 		return res;
 	}

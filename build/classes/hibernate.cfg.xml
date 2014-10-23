@@ -9,7 +9,7 @@
         <property name="hibernate.connection.username">postgres</property>
         <property name="hibernate.connection.password">pg123</property>
         <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/coffee</property>
-
+	<!-- <property name="hibernate.current_session_context_class">org.hibernate.context.ThreadLocalSessionContext</property> -->
 
 
         <property name="connection_pool_size">1</property>
