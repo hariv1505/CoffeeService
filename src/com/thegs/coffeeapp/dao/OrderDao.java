@@ -1,10 +1,7 @@
 package com.thegs.coffeeapp.dao;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
 import java.util.logging.Logger;
 
 import org.hibernate.Query;
@@ -67,8 +64,7 @@ public class OrderDao {
 		order = query.list();
 		session.close();
 		   if(order.size() > 0) {
-				Order o = (Order) (order.get(0));
-				return o;
+				return (Order) (order.get(0));
 			}
 			else
 				return null;
@@ -82,10 +78,10 @@ public class OrderDao {
 		java.util.List allOrders;
 		allOrders = query.list();
 		session.close();
-		  for (int i = 0; i < allOrders.size(); i++) {
-			  Order order = (Order) allOrders.get(i);
-			  orderList.add(order);
-		  }
+		for (int i = 0; i < allOrders.size(); i++) {
+			Order order = (Order) allOrders.get(i);
+			orderList.add(order);
+		}
         return orderList;
     }
 	

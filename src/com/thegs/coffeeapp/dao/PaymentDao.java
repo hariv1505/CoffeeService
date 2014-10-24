@@ -1,9 +1,7 @@
 package com.thegs.coffeeapp.dao;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import javassist.bytecode.stackmap.TypeData.ClassName;
@@ -14,7 +12,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 
-import com.thegs.coffeeapp.model.Order;
 import com.thegs.coffeeapp.model.Payment;
 
 
@@ -25,7 +22,7 @@ public class PaymentDao {
     //private Map<String, Payment> contentStore = new HashMap<String, Payment>();
     
     private static final Logger log = Logger.getLogger( ClassName.class.getName() );
-	private Session session;
+    SessionFactory sessionFactory;
 
     public PaymentDao() {
     	
@@ -33,8 +30,7 @@ public class PaymentDao {
         Configuration configuration = new Configuration();
         configuration.configure("hibernate.cfg.xml");
         StandardServiceRegistryBuilder ssrb = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
-        SessionFactory sessionFactory = configuration.buildSessionFactory(ssrb.build());
-        session = sessionFactory.openSession();
+        sessionFactory = configuration.buildSessionFactory(ssrb.build());
         log.info("Connection with the database created successfuly");
 
     	//not created yet
@@ -44,7 +40,8 @@ public class PaymentDao {
     }
     
     public void addPayment(Payment pay) {
-	    session.beginTransaction();
+    	Session session = sessionFactory.openSession();
+    	session.beginTransaction();
 	
 	    //parameter checks
 	
@@ -56,27 +53,34 @@ public class PaymentDao {
 	}
     
     public Payment getPaymentById(String id) {
+    	Session session = sessionFactory.openSession();
 		Query query = session.createQuery("from Payment where id=:id");
 		query.setParameter("id", id);
-		List<Payment> pays = query.list();
+		List pays = query.list();
+		session.close();
 		
-		if(pays.size() > 0) return pays.get(0);
-		else return null;
+		if(pays.size() > 0) 
+			return (Payment) pays.get(0);
+		else 
+			return null;
     }
 	
 	//TODO: why can't we just return query.list()?
 	public List<Payment> getAllPayments() {
+		Session session = sessionFactory.openSession();
 		Query query = session.createQuery("from Order");
 		List<Payment> paymentList = new ArrayList<Payment>();
-		List<Payment> allPayments = query.list();
-		  for (int i = 0; i < allPayments.size(); i++) {
-			  Payment order = allPayments.get(i);
-			  paymentList.add(order);
-		  }
+		List allPayments = query.list();
+		session.close();
+		for (int i = 0; i < allPayments.size(); i++) {
+			Payment order = (Payment) allPayments.get(i);
+			paymentList.add(order);
+		}
         return paymentList;
     }
 	
 	public void deletePayment(Payment p) {
+		Session session = sessionFactory.openSession();
 		session.beginTransaction();
 		session.delete(p);
 		session.getTransaction().commit();
