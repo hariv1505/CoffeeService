@@ -111,7 +111,6 @@ public class OrdersResource {
 			// TODO gives 204 no content error, needs to spit out some html
 			//servletResponse.sendRedirect("../create_order.html");
 		}
-		servletResponse.setStatus(201);
 		
 		return "done";
 	}

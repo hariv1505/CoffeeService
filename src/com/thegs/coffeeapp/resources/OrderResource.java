@@ -53,8 +53,7 @@ public class OrderResource {
 		if(o==null) {
 			throw new WebApplicationException(Response
 					.status(Response.Status.NOT_FOUND.getStatusCode())
-					.entity("Not Found")
-					.header("authorised", "false").build());
+					.entity("Not Found").build());
 		} else {
 			return o;
 		}
