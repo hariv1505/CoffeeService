@@ -3,6 +3,7 @@ package com.thegs.coffeeapp.resources;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
@@ -26,6 +27,7 @@ public class OrderResource {
 	@Context
 	Request request;
 	String id;
+	String AUTH_KEY = "abc123";
 	public OrderResource(UriInfo uriInfo, Request request, String id) {
 		this.uriInfo = uriInfo;
 		this.request = request;
@@ -35,7 +37,10 @@ public class OrderResource {
 	// Produces XML or JSON output for a client 'program'			
 	@GET
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Order getOrder() {
+	public Order getOrder(@HeaderParam("Auth") String auth) {
+		if(auth == null || !auth.equals(AUTH_KEY))
+			// TODO need to change this, e.g. return something better than an empty order
+			return new Order();
 		OrderDao ord = new OrderDao();
 		Order o = ord.getOrderById(id);
 		if(o==null)
@@ -52,10 +57,13 @@ public class OrderResource {
 		if(o==null)
 			throw new RuntimeException("GET: Order with " + id +  " not found");
 		return o;
+		
 	}
 	
 	@DELETE
-	public String deleteOrder() {
+	public String deleteOrder(@HeaderParam("Auth") String auth) {
+		if(auth == null || !auth.equals(AUTH_KEY))
+			return "";
 		OrderDao ord = new OrderDao();
 		Order o = ord.getOrderById(id);
 		if (o!=null) {
@@ -69,7 +77,10 @@ public class OrderResource {
 	
 	@PUT
 	@Consumes(MediaType.APPLICATION_XML)
-	public Order putOrder(JAXBElement<Order> o) {
+	public Order putOrder(JAXBElement<Order> o,@HeaderParam("Auth") String auth) {
+		if(auth == null || !auth.equals(AUTH_KEY))
+			// TODO need to change this, e.g. return something better than an empty order
+			return new Order();
 		Order newO = o.getValue();
 		Response r = putAndGetResponse(newO);
 		if (r.getStatus() == 201) {
@@ -83,7 +94,6 @@ public class OrderResource {
 	private Response putAndGetResponse(Order newOrder) {
 		Response res;
 		OrderDao ord = new OrderDao();
-		//res not working correctly
 		if(ord.getOrderById(newOrder.getId()) == null) {
 			res = Response.noContent().build();
 		} else {

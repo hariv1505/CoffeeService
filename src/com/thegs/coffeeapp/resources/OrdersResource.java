@@ -16,8 +16,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import com.sun.jersey.api.client.ClientResponse.Status;
 import com.thegs.coffeeapp.dao.OrderDao;
 import com.thegs.coffeeapp.model.Order;
 
@@ -32,6 +34,7 @@ public class OrdersResource {
 	UriInfo uriInfo;
 	@Context
 	Request request;
+	String AUTH_KEY = "abc123";
 	
 	//TODO: not sure if actually in constructor
 //	public OrdersResource(@HeaderParam("Authorization") String auth) {
@@ -52,14 +55,21 @@ public class OrdersResource {
 	// Return the list of orders for client applications/programs
 	@GET
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public List<Order> getOrders() {
+	public List<Order> getOrders(@HeaderParam("Auth") String auth) {
+		if(auth == null || !auth.equals(AUTH_KEY))
+			// TODO need to change this, e.g. return something better than an empty list
+			//	Response.status(Status.UNAUTHORIZED).build();
+			return new ArrayList<Order>();
 		OrderDao ord = new OrderDao();
-		return ord.getAllOrders();	}
+		return ord.getAllOrders();	
+	}
 	
 	@GET
 	@Path("count")
 	@Produces(MediaType.TEXT_PLAIN)
-	public String getCount() {
+	public String getCount(@HeaderParam("Auth") String auth) {
+		if(auth == null || !auth.equals(AUTH_KEY))
+			return "Unauthorized";
 		OrderDao ord = new OrderDao();
 		int count = ord.getAllOrders().size();
 		return String.valueOf(count);
@@ -74,22 +84,29 @@ public class OrdersResource {
 			@FormParam("coffeetype") String cType,
 			@FormParam("cost") String cost,
 			@FormParam("additions") String additions,
-			@Context HttpServletResponse servletResponse
+			@Context HttpServletResponse servletResponse,
+			@HeaderParam("Auth") String auth
 	) throws IOException {
-		Order o;
-		if (additions != null) {
-			o = new Order(id, cType, cost, additions);
-		} else {
-			o = new Order(id, cType, cost);
+		if(auth == null || !auth.equals(AUTH_KEY)){
+			servletResponse.setHeader("authorised", "false");
+		}else {
+			Order o;
+			if (additions != null) {
+				o = new Order(id, cType, cost, additions);
+			} else {
+				o = new Order(id, cType, cost);
+			}
+			OrderDao ord = new OrderDao();
+			ord.addOrder(o);
+			
+			// Redirect to some HTML page  
+			// You need to create this file under WEB-INF
+			servletResponse.setHeader("cost", cost);
+			servletResponse.setHeader("uri", "/orders/" + id);
+			servletResponse.setHeader("authorised", "true");
+			// TODO gives 204 no content error, needs to spit out some html
+			//servletResponse.sendRedirect("../create_order.html");
 		}
-		OrderDao ord = new OrderDao();
-		ord.addOrder(o);
-		
-		// Redirect to some HTML page  
-		// You need to create this file under WEB-INF
-		servletResponse.setHeader("cost", cost);
-		servletResponse.setHeader("uri", "/orders/" + id);
-		//servletResponse.sendRedirect("../create_order.html");
 	}
 	
 	
