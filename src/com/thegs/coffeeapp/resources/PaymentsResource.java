@@ -14,10 +14,13 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import javax.xml.bind.JAXBElement;
 
 import com.thegs.coffeeapp.dao.PaymentDao;
 import com.thegs.coffeeapp.model.Payment;
@@ -36,33 +39,42 @@ public class PaymentsResource {
 	
 	PaymentDao payDao = new PaymentDao();
 	
-	//TODO: not sure if actually in constructor
-	/*public PaymentsResource(@HeaderParam("Authorization") String auth) {
-		//TODO: not actually isEmpty - need an actual authorization
-		if (auth.isEmpty()) {
-			//throw exception and stop everything
-		}
-	}*/
+	private String AUTH_KEY = "def456";
 
 
 	// Return the list of payments to the user in the browser
 	@GET
 	@Produces(MediaType.TEXT_XML)
 	public List<Payment> getPaymentsBrowser() {
+		
 		return payDao.getAllPayments();
 	}
 	
 	// Return the list of payments for client applications/programs
 	@GET
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public List<Payment> getPayments() {
+	public List<Payment> getPayments(@HeaderParam("Auth") String auth,
+			@Context final HttpServletResponse response) {
+		if(auth == null || !auth.equals(AUTH_KEY)){
+			response.setHeader("authorised", "false");
+			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN.getStatusCode())
+					.entity("Forbidden")
+					.header("authorised", "false").build());
+		}
 		return payDao.getAllPayments(); 
 	}
 	
 	@GET
 	@Path("count")
 	@Produces(MediaType.TEXT_PLAIN)
-	public String getCount() {
+	public String getCount(@HeaderParam("Auth") String auth,
+			@Context final HttpServletResponse response) {
+		if(auth == null || !auth.equals(AUTH_KEY)){
+			response.setHeader("authorised", "false");
+			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN.getStatusCode())
+					.entity("Forbidden")
+					.header("authorised", "false").build());
+		}
 		return String.valueOf(payDao.getAllPayments().size());
 	}
 	
@@ -74,8 +86,16 @@ public class PaymentsResource {
 	// e.g., http://localhost:8080/cs9322.simple.rest.payments/rest/payments/3
         // This matches this method which returns PaymentResource.
 	@Path("{payment}")
-	public PaymentResource getOrder(
-			@PathParam("payment") String id) {
+	public PaymentResource getPayment(
+			@PathParam("payment") String id,
+			@HeaderParam("Auth") String auth,
+			@Context final HttpServletResponse response) {
+		if(auth == null || !auth.equals(AUTH_KEY)){
+			response.setHeader("authorised", "false");
+			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN.getStatusCode())
+					.entity("Forbidden")
+					.header("authorised", "false").build());
+		}
 		return new PaymentResource(uriInfo, request, id);
 	}
 	

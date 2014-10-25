@@ -1,12 +1,15 @@
 package com.thegs.coffeeapp.resources;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
@@ -28,6 +31,9 @@ public class PaymentResource {
 	Request request;
 	String id;
 	PaymentDao payDao;
+	
+	private String AUTH_KEY = "def456";
+	
 	public PaymentResource(UriInfo uriInfo, Request request, String id) {
 		this.uriInfo = uriInfo;
 		this.request = request;
@@ -38,51 +44,61 @@ public class PaymentResource {
 	// Produces XML or JSON output for a client 'program'			
 	@GET
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Payment getPayment() {
+	public Payment getPayment(@HeaderParam("Auth") String auth,
+			@Context final HttpServletResponse response) {
+		if(auth == null || !auth.equals(AUTH_KEY)){
+			response.setHeader("authorised", "false");
+			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN.getStatusCode())
+					.entity("Forbidden")
+					.header("authorised", "false").build());
+		}
 		Payment p = payDao.getPaymentById(id);
 		if(p==null)
-			throw new RuntimeException("GET: Payment with" + id +  " not found");
+			throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST.getStatusCode())
+					.entity("Bad Request").build());
 		return p;
 	}
 	
 	// Produces HTML for browser-based client
 	@GET
 	@Produces(MediaType.TEXT_XML)
-	public Payment getPaymentHTML() {
+	public Payment getPaymentHTML(@HeaderParam("Auth") String auth,
+			@Context final HttpServletResponse response) {
+		if(auth == null || !auth.equals(AUTH_KEY)){
+			response.setHeader("authorised", "false");
+			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN.getStatusCode())
+					.entity("Forbidden")
+					.header("authorised", "false").build());
+		}
 		Payment p = payDao.getPaymentById(id);
 		if(p==null)
-			throw new RuntimeException("GET: Payment with " + id +  " not found");
+			throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST.getStatusCode())
+					.entity("Bad Request").build());
 		return p;
 	}
-	
+
 	@PUT
-	@Consumes(MediaType.APPLICATION_XML)
-	public Response putPayment(JAXBElement<Payment> p) {
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.TEXT_XML})
+	public Response putPayment(JAXBElement<Payment> p,
+			@HeaderParam("Auth") String auth,
+			@Context final HttpServletResponse response) {
+		if(auth == null || !auth.equals(AUTH_KEY)){
+			response.setHeader("authorised", "false");
+			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN.getStatusCode())
+					.entity("Forbidden")
+					.header("authorised", "false").build());
+		}
 		Payment newP = p.getValue();
 		Response res;
-		if(payDao.getPaymentById(id) == null) {
-			res = Response.noContent().build();
-		} else {
-			res = Response.created(uriInfo.getAbsolutePath()).build();
-		}
-		payDao.deletePayment(payDao.getPaymentById(id));
+		Payment oldP = payDao.getPaymentById(id);
+		
+		payDao.deletePayment(oldP);
+
 		payDao.addPayment(newP);
+		res = Response.created(uriInfo.getAbsolutePath()).build();
 		
 		return res;
 	}
 	
-	//TODO getting rid of this
-	//private Response putAndGetResponse(Payment p) {
-	//	
-	//	
-	//}
-	
-	@OPTIONS
-	@Produces(MediaType.TEXT_HTML)
-	@Path("options")		//TODO: are we allowed to do this? :S
-	public void getOptions() {
-		//TODO change answer depending on status
-		// no idea how to do this
-		
-	}
 }

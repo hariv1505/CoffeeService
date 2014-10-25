@@ -17,12 +17,9 @@ import com.thegs.coffeeapp.model.Payment;
 
 
 public class PaymentDao {
-    //instance;
-
-    //private Map<String, Payment> contentStore = new HashMap<String, Payment>();
     
     private static final Logger log = Logger.getLogger( ClassName.class.getName() );
-    SessionFactory sessionFactory;
+    private SessionFactory sessionFactory;
 
     public PaymentDao() {
     	
@@ -56,7 +53,8 @@ public class PaymentDao {
     	Session session = sessionFactory.openSession();
 		Query query = session.createQuery("from Payment where id=:id");
 		query.setParameter("id", id);
-		List pays = query.list();
+		java.util.List pays;
+		pays = query.list();
 		session.close();
 		
 		if(pays.size() > 0) 
@@ -68,9 +66,10 @@ public class PaymentDao {
 	//TODO: why can't we just return query.list()?
 	public List<Payment> getAllPayments() {
 		Session session = sessionFactory.openSession();
-		Query query = session.createQuery("from Order");
+		Query query = session.createQuery("from Payment");
 		List<Payment> paymentList = new ArrayList<Payment>();
-		List allPayments = query.list();
+		java.util.List allPayments;
+		allPayments = query.list();
 		session.close();
 		for (int i = 0; i < allPayments.size(); i++) {
 			Payment order = (Payment) allPayments.get(i);
@@ -82,8 +81,12 @@ public class PaymentDao {
 	public void deletePayment(Payment p) {
 		Session session = sessionFactory.openSession();
 		session.beginTransaction();
-		session.delete(p);
-		session.getTransaction().commit();
+		try {
+			session.delete(p);
+			session.getTransaction().commit();
+		} catch (IllegalArgumentException ie) {
+			ie.printStackTrace();
+		}
         session.close();
 	}
     
