@@ -1,11 +1,13 @@
 package com.thegs.coffeeapp.resources;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
@@ -37,56 +39,95 @@ public class OrderResource {
 	// Produces XML or JSON output for a client 'program'			
 	@GET
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Order getOrder(@HeaderParam("Auth") String auth) {
-		if(auth == null || !auth.equals(AUTH_KEY))
-			// TODO need to change this, e.g. return something better than an empty order
-			return new Order();
+	public Order getOrder(@HeaderParam("Auth") String auth,
+			@Context final HttpServletResponse response) {
+		if(auth == null || !auth.equals(AUTH_KEY)) {
+			throw new WebApplicationException(Response
+					.status(Response.Status.FORBIDDEN.getStatusCode())
+					.entity("Forbidden")
+					.header("authorised", "false").build());
+			//return new Order();
+		}
 		OrderDao ord = new OrderDao();
 		Order o = ord.getOrderById(id);
-		if(o==null)
-			throw new RuntimeException("GET: Order with" + id +  " not found");
-		return o;
+		if(o==null) {
+			throw new WebApplicationException(Response
+					.status(Response.Status.NOT_FOUND.getStatusCode())
+					.entity("Not Found")
+					.header("authorised", "false").build());
+		} else {
+			return o;
+		}
 	}
 	
 	// Produces HTML for browser-based client
 	@GET
 	@Produces(MediaType.TEXT_XML)
-	public Order getOrderHTML() {
+	public Order getOrderHTML(@HeaderParam("Auth") String auth,
+			@Context final HttpServletResponse response) {
+		if(auth == null || !auth.equals(AUTH_KEY)) {
+			throw new WebApplicationException(Response
+					.status(Response.Status.FORBIDDEN.getStatusCode())
+					.entity("Forbidden")
+					.header("authorised", "false").build());
+		}
 		OrderDao ord = new OrderDao();
 		Order o = ord.getOrderById(id);
-		if(o==null)
-			throw new RuntimeException("GET: Order with " + id +  " not found");
-		return o;
+		if(o==null) {
+			//throw new RuntimeException("GET: Order with" + id +  " not found");
+			throw new WebApplicationException(Response
+					.status(Response.Status.BAD_REQUEST.getStatusCode())
+					.entity("Bad Request").build());
+		} else {
+			response.setStatus(Response.Status.CREATED.getStatusCode());
+			return o;
+		}
 		
 	}
 	
 	@DELETE
-	public String deleteOrder(@HeaderParam("Auth") String auth) {
-		if(auth == null || !auth.equals(AUTH_KEY))
-			return "";
+	public String deleteOrder(@HeaderParam("Auth") String auth,
+			@Context final HttpServletResponse response) {
+		if(auth == null || !auth.equals(AUTH_KEY)) {
+			throw new WebApplicationException(Response
+					.status(Response.Status.FORBIDDEN.getStatusCode())
+					.entity("Forbidden")
+					.header("authorised", "false").build());
+		}
 		OrderDao ord = new OrderDao();
 		Order o = ord.getOrderById(id);
 		if (o!=null) {
 			ord.deleteOrder(o);
-			return "200";
+			return "200 OK";
 		} else {
 			new RuntimeException("DELETE: Order with " + id +  " not found").printStackTrace();
-			return "404";
+			throw new WebApplicationException(Response
+					.status(Response.Status.NOT_FOUND.getStatusCode())
+					.entity("NOT FOUND").build());
 		}
 	}
 	
 	@PUT
 	@Consumes(MediaType.APPLICATION_XML)
-	public Order putOrder(JAXBElement<Order> o,@HeaderParam("Auth") String auth) {
-		if(auth == null || !auth.equals(AUTH_KEY))
-			// TODO need to change this, e.g. return something better than an empty order
-			return new Order();
+	@Produces(MediaType.TEXT_HTML)
+	public String putOrder(JAXBElement<Order> o,
+			@HeaderParam("Auth") String auth,
+			@Context HttpServletResponse response) {
+		if(auth == null || !auth.equals(AUTH_KEY)) {
+			throw new WebApplicationException(Response.status(403)
+					.entity("Forbidden")
+					.header("authorised", "false").build());
+		}
 		Order newO = o.getValue();
 		Response r = putAndGetResponse(newO);
 		if (r.getStatus() == 201) {
-			return newO;
+			//return newO;
+			return "newO";
 		} else {
-			throw new RuntimeException("UPDATE: Error " + r.getStatus());
+			throw new WebApplicationException(Response
+					.status(Response.Status.BAD_REQUEST.getStatusCode())
+					.entity("Bad Request").build());
+			//throw new RuntimeException("UPDATE: Error " + r.getStatus());
 		}
 	}
 	

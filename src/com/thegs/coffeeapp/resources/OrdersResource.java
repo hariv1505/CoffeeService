@@ -13,6 +13,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
@@ -79,7 +80,7 @@ public class OrdersResource {
 	@POST
 	@Produces(MediaType.TEXT_HTML)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public void newOrder(
+	public String newOrder(
 			@FormParam("id") String id,
 			@FormParam("coffeetype") String cType,
 			@FormParam("cost") String cost,
@@ -89,6 +90,9 @@ public class OrdersResource {
 	) throws IOException {
 		if(auth == null || !auth.equals(AUTH_KEY)){
 			servletResponse.setHeader("authorised", "false");
+			throw new WebApplicationException(Response.status(403)
+					.entity("Forbidden")
+					.header("authorised", "false").build());
 		}else {
 			Order o;
 			if (additions != null) {
@@ -107,6 +111,9 @@ public class OrdersResource {
 			// TODO gives 204 no content error, needs to spit out some html
 			//servletResponse.sendRedirect("../create_order.html");
 		}
+		servletResponse.setStatus(201);
+		
+		return "done";
 	}
 	
 	
