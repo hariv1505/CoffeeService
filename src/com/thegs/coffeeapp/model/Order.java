@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Order {
 	@Id
     private String id;
-	 @Column(name = "coffee_type")
+	@Column(name = "coffee_type")
     private String coffeeType;
     private String cost;
     private String additions;

@@ -89,7 +89,20 @@ public class PaymentDao {
 		}
         session.close();
 	}
-    
+
+	public void updatePayment(Payment newPayment) {
+		Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        //parameter checks
+        
+
+        session.update(newPayment);
+        session.getTransaction().commit();
+        session.close();
+        log.info("Updated payment with id: " + newPayment.getId());
+    }
+	
     /*
      * 	public Map<String, Payment> getStore(){
      *  	return contentStore;

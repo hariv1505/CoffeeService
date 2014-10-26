@@ -45,8 +45,14 @@ public class PaymentsResource {
 	// Return the list of payments to the user in the browser
 	@GET
 	@Produces(MediaType.TEXT_XML)
-	public List<Payment> getPaymentsBrowser() {
-		
+	public List<Payment> getPaymentsBrowser(	@HeaderParam("Auth") String auth,
+			@Context final HttpServletResponse response) {
+		if(auth == null || !auth.equals(AUTH_KEY)){
+			response.setHeader("authorised", "false");
+			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN.getStatusCode())
+					.entity("Forbidden")
+					.header("authorised", "false").build());
+		}
 		return payDao.getAllPayments();
 	}
 	

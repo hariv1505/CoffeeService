@@ -37,18 +37,18 @@ public class OrdersResource {
 	Request request;
 	String AUTH_KEY = "abc123";
 	
-	//TODO: not sure if actually in constructor
-//	public OrdersResource(@HeaderParam("Authorization") String auth) {
-//		//TODO: not actually isEmpty - need an actual authorization
-//		if (auth.isEmpty()) {
-//			//throw exception and stop everything
-//		}
-//	}
-	
 	// Return the list of orders to the user in the browser
 	@GET
 	@Produces(MediaType.TEXT_XML)
-	public List<Order> getOrdersBrowser() {
+	public List<Order> getOrdersBrowser(
+			@HeaderParam("Auth") String auth,
+			@Context final HttpServletResponse response) {
+		if(auth == null || !auth.equals(AUTH_KEY)){
+			response.setHeader("authorised", "false");
+			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN.getStatusCode())
+					.entity("Forbidden")
+					.header("authorised", "false").build());
+		}
 		OrderDao ord = new OrderDao();
 		return ord.getAllOrders(); 
 	}
@@ -56,11 +56,14 @@ public class OrdersResource {
 	// Return the list of orders for client applications/programs
 	@GET
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public List<Order> getOrders(@HeaderParam("Auth") String auth) {
-		if(auth == null || !auth.equals(AUTH_KEY))
-			// TODO need to change this, e.g. return something better than an empty list
-			//	Response.status(Status.UNAUTHORIZED).build();
-			return new ArrayList<Order>();
+	public List<Order> getOrders(@HeaderParam("Auth") String auth,
+		@Context final HttpServletResponse response) {
+		if(auth == null || !auth.equals(AUTH_KEY)){
+			response.setHeader("authorised", "false");
+			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN.getStatusCode())
+					.entity("Forbidden")
+					.header("authorised", "false").build());
+		}
 		OrderDao ord = new OrderDao();
 		return ord.getAllOrders();	
 	}
@@ -90,10 +93,10 @@ public class OrdersResource {
 	) throws IOException {
 		if(auth == null || !auth.equals(AUTH_KEY)){
 			servletResponse.setHeader("authorised", "false");
-			throw new WebApplicationException(Response.status(403)
+			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN.getStatusCode())
 					.entity("Forbidden")
-					.header("authorised", "false").build());
-		}else {
+				.header("authorised", "false").build());
+		} else {
 			Order o;
 			if (additions != null) {
 				o = new Order(id, cType, cost, additions);
@@ -124,7 +127,15 @@ public class OrdersResource {
         // This matches this method which returns OrderResource.
 	@Path("{order}")
 	public OrderResource getOrder(
-			@PathParam("order") String id) {
+			@PathParam("order") String id,
+			@HeaderParam("Auth") String auth,
+			@Context final HttpServletResponse response) {
+		if(auth == null || !auth.equals(AUTH_KEY)){
+			response.setHeader("authorised", "false");
+			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN.getStatusCode())
+					.entity("Forbidden")
+					.header("authorised", "false").build());
+		}
 		return new OrderResource(uriInfo, request, id);
 	}
 	

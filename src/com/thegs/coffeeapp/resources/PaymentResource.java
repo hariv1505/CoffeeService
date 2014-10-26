@@ -17,7 +17,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.JAXBElement;
 
+import com.thegs.coffeeapp.dao.OrderDao;
 import com.thegs.coffeeapp.dao.PaymentDao;
+import com.thegs.coffeeapp.model.Order;
 import com.thegs.coffeeapp.model.Payment;
 
 
@@ -79,7 +81,7 @@ public class PaymentResource {
 
 	@PUT
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.TEXT_XML})
+	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	public Response putPayment(JAXBElement<Payment> p,
 			@HeaderParam("Auth") String auth,
 			@Context final HttpServletResponse response) {
@@ -90,14 +92,49 @@ public class PaymentResource {
 					.header("authorised", "false").build());
 		}
 		Payment newP = p.getValue();
+		Response r = putAndGetResponse(newP);
+		if (r.getStatus() == 201) {
+			return Response.created(uriInfo.getAbsolutePath()).entity(newP).build();
+		} else {
+			throw new WebApplicationException(Response
+					.status(Response.Status.BAD_REQUEST.getStatusCode())
+					.entity("Bad Request").build());
+		}
+	}
+	
+	@PUT
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.TEXT_XML)
+	public Response putPaymentHTML(JAXBElement<Payment> p,
+			@HeaderParam("Auth") String auth,
+			@Context final HttpServletResponse response) {
+		if(auth == null || !auth.equals(AUTH_KEY)){
+			response.setHeader("authorised", "false");
+			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN.getStatusCode())
+					.entity("Forbidden")
+					.header("authorised", "false").build());
+		}
+		Payment newP = p.getValue();
+		Response r = putAndGetResponse(newP);
+		if (r.getStatus() == 201) {
+			return Response.created(uriInfo.getAbsolutePath()).entity(newP).build();
+		} else {
+			throw new WebApplicationException(Response
+					.status(Response.Status.BAD_REQUEST.getStatusCode())
+					.entity("Bad Request").build());
+		}
+	}
+	
+	
+	private Response putAndGetResponse(Payment newPayment) {
 		Response res;
-		Payment oldP = payDao.getPaymentById(id);
-		
-		payDao.deletePayment(oldP);
-
-		payDao.addPayment(newP);
-		res = Response.created(uriInfo.getAbsolutePath()).build();
-		
+		PaymentDao pay = new PaymentDao();
+		if(pay.getPaymentById(newPayment.getId()) == null) {
+			res = Response.noContent().build();
+		} else {
+			res = Response.created(uriInfo.getAbsolutePath()).build();
+			pay.updatePayment(newPayment);
+		}
 		return res;
 	}
 	
