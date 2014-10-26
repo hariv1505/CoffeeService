@@ -108,7 +108,6 @@ public class OrderResource {
 	
 	@PUT
 	@Consumes(MediaType.APPLICATION_XML)
-	@Produces(MediaType.TEXT_HTML)
 	public String putOrder(JAXBElement<Order> o,
 			@HeaderParam("Auth") String auth,
 			@Context HttpServletResponse response) {
