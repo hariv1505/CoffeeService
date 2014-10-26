@@ -95,12 +95,12 @@ public class PaymentDao {
         session.beginTransaction();
 
         //parameter checks
-        
-
-        session.update(newPayment);
+       
+        session.saveOrUpdate(newPayment);
         session.getTransaction().commit();
         session.close();
         log.info("Updated payment with id: " + newPayment.getId());
+        log.info(newPayment.getCardDetails());
     }
 	
     /*

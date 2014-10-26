@@ -24,9 +24,15 @@ public class Payment {
     }
     public Payment (String id, String payType, String amount){
         this.id = id;
-        this.payType = payType;
-        this.amount = amount;
-        this.cardDetails = null;
+        this.setPayType(payType);
+        this.setAmount(amount);
+    }
+    
+    public Payment (String id, String payType, String amount, String cardDetails){
+        this.id = id;
+        this.setPayType(payType);
+        this.setAmount(amount);
+        this.setCardDetails(cardDetails);
     }
     public String getId() {
         return id;
@@ -56,13 +62,8 @@ public class Payment {
 		return cardDetails;
 	}
 	public void setCardDetails(String cardDetails) {
-		if (this.isCard() && cardDetails != null) {
-			this.cardDetails = cardDetails;
-		}
+		this.cardDetails = cardDetails;
 	}
 	
-	public boolean isCard() {
-		return payType.equalsIgnoreCase("card");
-	}
     
 }

@@ -22,7 +22,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.JAXBElement;
 
+import com.thegs.coffeeapp.dao.OrderDao;
 import com.thegs.coffeeapp.dao.PaymentDao;
+import com.thegs.coffeeapp.model.Order;
 import com.thegs.coffeeapp.model.Payment;
 
 
