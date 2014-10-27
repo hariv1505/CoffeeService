@@ -17,6 +17,7 @@ public class Order {
     private String cost;
     private String additions;
     private String status;
+    private String released;
 
     public Order(){
 
@@ -61,6 +62,12 @@ public class Order {
 	}
 	public void setStatus(String status) {
 		this.status = status;
+	}
+	public String getReleased() {
+		return released;
+	}
+	public void setReleased(String released) {
+		this.released = released;
 	}
     
 }
