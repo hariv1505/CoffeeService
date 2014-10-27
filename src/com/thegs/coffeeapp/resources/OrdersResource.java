@@ -1,7 +1,6 @@
 package com.thegs.coffeeapp.resources;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -20,7 +19,6 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import com.sun.jersey.api.client.ClientResponse.Status;
 import com.thegs.coffeeapp.dao.OrderDao;
 import com.thegs.coffeeapp.model.Order;
 

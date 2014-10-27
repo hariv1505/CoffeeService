@@ -16,7 +16,7 @@ public class Order {
     private String coffeeType;
     private String cost;
     private String additions;
-    private String detail;
+    private String status;
 
     public Order(){
 
@@ -56,11 +56,11 @@ public class Order {
 	public void setAdditions(String additions) {
 		this.additions = additions;
 	}
-	public String getDetail() {
-		return detail;
+	public String getStatus() {
+		return status;
 	}
-	public void setDetail(String detail) {
-		this.detail = detail;
+	public void setStatus(String status) {
+		this.status = status;
 	}
     
 }
