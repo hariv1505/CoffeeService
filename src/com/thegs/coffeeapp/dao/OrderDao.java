@@ -92,5 +92,12 @@ public class OrderDao {
 		session.getTransaction().commit();
 		session.close();
 	}
+	
+	protected void finalize() throws Throwable {
+		super.finalize();
+		while (!sessionFactory.isClosed()) {
+			sessionFactory.close();
+		}
+	}
 
 }

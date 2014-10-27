@@ -103,6 +103,11 @@ public class PaymentDao {
         log.info(newPayment.getCardDetails());
     }
 	
+	protected void finalize() throws Throwable {
+		super.finalize();
+		sessionFactory.close();
+	}
+	
     /*
      * 	public Map<String, Payment> getStore(){
      *  	return contentStore;
