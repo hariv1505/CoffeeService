@@ -46,7 +46,7 @@ public class PaymentsResource {
 		if(auth == null || !auth.equals(AUTH_KEY)){
 			response.setHeader("authorised", "false");
 			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN.getStatusCode())
-					.entity("Forbidden")
+					.entity("<error>Forbidden</error>")
 					.header("authorised", "false").build());
 		}
 		return payDao.getAllPayments();
@@ -60,7 +60,7 @@ public class PaymentsResource {
 		if(auth == null || !auth.equals(AUTH_KEY)){
 			response.setHeader("authorised", "false");
 			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN.getStatusCode())
-					.entity("Forbidden")
+					.entity("<error>Forbidden</error>")
 					.header("authorised", "false").build());
 		}
 		return payDao.getAllPayments(); 
@@ -89,15 +89,7 @@ public class PaymentsResource {
         // This matches this method which returns PaymentResource.
 	@Path("{payment}")
 	public PaymentResource getPayment(
-			@PathParam("payment") String id,
-			@HeaderParam("Auth") String auth,
-			@Context final HttpServletResponse response) {
-		if(auth == null || !auth.equals(AUTH_KEY)){
-			response.setHeader("authorised", "false");
-			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN.getStatusCode())
-					.entity("Forbidden")
-					.header("authorised", "false").build());
-		}
+			@PathParam("payment") String id) {
 		return new PaymentResource(uriInfo, request, id);
 	}
 	

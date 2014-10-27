@@ -49,7 +49,7 @@ public class PaymentResource {
 		if(auth == null || !auth.equals(AUTH_KEY)){
 			response.setHeader("authorised", "false");
 			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN.getStatusCode())
-					.entity("Forbidden")
+					.entity("<error>Forbidden</error>")
 					.header("authorised", "false").build());
 		}
 		Payment p = payDao.getPaymentById(id);
@@ -67,7 +67,7 @@ public class PaymentResource {
 		if(auth == null || !auth.equals(AUTH_KEY)){
 			response.setHeader("authorised", "false");
 			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN.getStatusCode())
-					.entity("Forbidden")
+					.entity("<error>Forbidden</error>")
 					.header("authorised", "false").build());
 		}
 		Payment p = payDao.getPaymentById(id);
@@ -76,65 +76,6 @@ public class PaymentResource {
 					.entity("Bad Request").build());
 		return p;
 	}
-
-	/*@PUT
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response putPayment(JAXBElement<Payment> p,
-			@HeaderParam("Auth") String auth,
-			@Context final HttpServletResponse response) {
-		if(auth == null || !auth.equals(AUTH_KEY)){
-			response.setHeader("authorised", "false");
-			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN.getStatusCode())
-					.entity("Forbidden")
-					.header("authorised", "false").build());
-		}
-		Payment newP = p.getValue();
-		Response r = putAndGetResponse(newP);
-		if (r.getStatus() == 201) {
-			return Response.created(uriInfo.getAbsolutePath()).entity(newP).build();
-		} else {
-			throw new WebApplicationException(Response
-					.status(Response.Status.BAD_REQUEST.getStatusCode())
-					.entity("Bad Request").build());
-		}
-	}
-	
-	@PUT
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(MediaType.TEXT_XML)
-	public Response putPaymentHTML(JAXBElement<Payment> p,
-			@HeaderParam("Auth") String auth,
-			@Context final HttpServletResponse response) {
-		if(auth == null || !auth.equals(AUTH_KEY)){
-			response.setHeader("authorised", "false");
-			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN.getStatusCode())
-					.entity("Forbidden")
-					.header("authorised", "false").build());
-		}
-		Payment newP = p.getValue();
-		Response r = putAndGetResponse(newP);
-		if (r.getStatus() == 201) {
-			return Response.created(uriInfo.getAbsolutePath()).entity(newP).build();
-		} else {
-			throw new WebApplicationException(Response
-					.status(Response.Status.BAD_REQUEST.getStatusCode())
-					.entity("Bad Request").build());
-		}
-	}
-	
-	
-	private Response putAndGetResponse(Payment newPayment) {
-		Response res;
-		PaymentDao pay = new PaymentDao();
-		if(pay.getPaymentById(newPayment.getId()) == null) {
-			res = Response.noContent().build();
-		} else {
-			res = Response.created(uriInfo.getAbsolutePath()).build();
-			pay.updatePayment(newPayment);
-		}
-		return res;
-	}*/
 	
 	@PUT
 	@Consumes(MediaType.APPLICATION_XML)
@@ -143,7 +84,7 @@ public class PaymentResource {
 			@Context HttpServletResponse response) {
 		if(auth == null || !auth.equals(AUTH_KEY)) {
 			throw new WebApplicationException(Response.status(403)
-					.entity("Forbidden")
+					.entity("<error>Forbidden</error>")
 					.header("authorised", "false").build());
 		}
 		Payment newP = p.getValue();

@@ -46,7 +46,7 @@ public class OrdersResource {
 		if(auth == null || !auth.equals(AUTH_KEY)){
 			response.setHeader("authorised", "false");
 			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN.getStatusCode())
-					.entity("Forbidden")
+					.entity("<error>Forbidden</error>")
 					.header("authorised", "false").build());
 		}
 		OrderDao ord = new OrderDao();
@@ -61,7 +61,7 @@ public class OrdersResource {
 		if(auth == null || !auth.equals(AUTH_KEY)){
 			response.setHeader("authorised", "false");
 			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN.getStatusCode())
-					.entity("Forbidden")
+					.entity("<error>Forbidden</error>")
 					.header("authorised", "false").build());
 		}
 		OrderDao ord = new OrderDao();
@@ -94,7 +94,7 @@ public class OrdersResource {
 		if(auth == null || !auth.equals(AUTH_KEY)){
 			servletResponse.setHeader("authorised", "false");
 			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN.getStatusCode())
-					.entity("Forbidden")
+					.entity("<html>Forbidden</html>")
 				.header("authorised", "false").build());
 		} else {
 			Order o;
@@ -127,15 +127,7 @@ public class OrdersResource {
         // This matches this method which returns OrderResource.
 	@Path("{order}")
 	public OrderResource getOrder(
-			@PathParam("order") String id,
-			@HeaderParam("Auth") String auth,
-			@Context final HttpServletResponse response) {
-		if(auth == null || !auth.equals(AUTH_KEY)){
-			response.setHeader("authorised", "false");
-			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN.getStatusCode())
-					.entity("Forbidden")
-					.header("authorised", "false").build());
-		}
+			@PathParam("order") String id) {
 		return new OrderResource(uriInfo, request, id);
 	}
 	

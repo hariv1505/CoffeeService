@@ -45,7 +45,7 @@ public class OrderResource {
 		if(auth == null || !auth.equals(AUTH_KEY)) {
 			throw new WebApplicationException(Response
 					.status(Response.Status.FORBIDDEN.getStatusCode())
-					.entity("Forbidden")
+					.entity("<error>Forbidden</error>")
 					.header("authorised", "false").build());
 			//return new Order();
 		}
@@ -68,7 +68,7 @@ public class OrderResource {
 		if(auth == null || !auth.equals(AUTH_KEY)) {
 			throw new WebApplicationException(Response
 					.status(Response.Status.FORBIDDEN.getStatusCode())
-					.entity("Forbidden")
+					.entity("<error>Forbidden</error>")
 					.header("authorised", "false").build());
 		}
 		OrderDao ord = new OrderDao();
@@ -91,7 +91,7 @@ public class OrderResource {
 		if(auth == null || !auth.equals(AUTH_KEY)) {
 			throw new WebApplicationException(Response
 					.status(Response.Status.FORBIDDEN.getStatusCode())
-					.entity("Forbidden")
+					.entity("<error>Forbidden</error>")
 					.header("authorised", "false").build());
 		}
 		OrderDao ord = new OrderDao();
@@ -114,7 +114,7 @@ public class OrderResource {
 			@Context HttpServletResponse response) {
 		if(auth == null || !auth.equals(AUTH_KEY)) {
 			throw new WebApplicationException(Response.status(403)
-					.entity("Forbidden")
+					.entity("<error>Forbidden</error>")
 					.header("authorised", "false").build());
 		}
 		Order newO = o.getValue();
@@ -144,12 +144,12 @@ public class OrderResource {
 	}
 	
 	@OPTIONS
-	public Response optionsReq() {
+	public Response optionsOrderReq() {
 		
 		OrderDao ord = new OrderDao();
 		String status = ord.getOrderById(id).getStatus();
 		String accConAllMet = ""; 
-		if (status.equals(null)) {
+		if (status == null) {
 			accConAllMet = "GET, PUT, DELETE, OPTIONS";
 		} else {
 			accConAllMet = "GET, OPTIONS";
