@@ -5,6 +5,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.OPTIONS;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
@@ -12,6 +13,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.JAXBElement;
 
@@ -139,5 +141,24 @@ public class OrderResource {
 			ord.updateOrder(newOrder);
 		}
 		return res;
+	}
+	
+	@OPTIONS
+	public Response optionsReq() {
+		
+		OrderDao ord = new OrderDao();
+		String status = ord.getOrderById(id).getStatus();
+		String accConAllMet = ""; 
+		if (status.equals(null)) {
+			accConAllMet = "GET, PUT, DELETE, OPTIONS";
+		} else {
+			accConAllMet = "GET, OPTIONS";
+		}
+		
+		ResponseBuilder rb = Response.ok().header("Access-Control-Allow-Origin", "*")
+			      .header("Access-Control-Allow-Methods", accConAllMet);
+		
+		return rb.build();
+		
 	}
 }
