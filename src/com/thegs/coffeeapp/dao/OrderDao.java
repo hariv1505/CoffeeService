@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javassist.bytecode.stackmap.TypeData.ClassName;
+
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
-
-import javassist.bytecode.stackmap.TypeData.ClassName;
 
 import com.thegs.coffeeapp.model.Order;
 
@@ -60,14 +60,14 @@ public class OrderDao {
 		Session session = sessionFactory.openSession();
 		Query query = session.createQuery("from Order where id=:id");
 		query.setParameter("id", id);
-		java.util.List order;
-		order = query.list();
+		@SuppressWarnings("unchecked")
+		List<Order> order = query.list();
 		session.close();
-		   if(order.size() > 0) {
-				return (Order) (order.get(0));
-			}
-			else
-				return null;
+		if(order.size() > 0) {
+			return order.get(0);
+		}
+		else
+			return null;
 		   
     }
 	
@@ -75,8 +75,8 @@ public class OrderDao {
 		Session session = sessionFactory.openSession();
 		Query query = session.createQuery("from Order");
 		List<Order> orderList = new ArrayList<Order>();
-		java.util.List allOrders;
-		allOrders = query.list();
+		@SuppressWarnings("unchecked")
+		List<Order> allOrders = query.list();
 		session.close();
 		for (int i = 0; i < allOrders.size(); i++) {
 			Order order = (Order) allOrders.get(i);

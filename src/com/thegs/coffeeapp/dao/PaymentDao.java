@@ -53,8 +53,8 @@ public class PaymentDao {
     	Session session = sessionFactory.openSession();
 		Query query = session.createQuery("from Payment where id=:id");
 		query.setParameter("id", id);
-		java.util.List pays;
-		pays = query.list();
+		@SuppressWarnings("unchecked")
+		List<Payment> pays = query.list();
 		session.close();
 		
 		if(pays.size() > 0) 
@@ -68,8 +68,8 @@ public class PaymentDao {
 		Session session = sessionFactory.openSession();
 		Query query = session.createQuery("from Payment");
 		List<Payment> paymentList = new ArrayList<Payment>();
-		java.util.List allPayments;
-		allPayments = query.list();
+		@SuppressWarnings("unchecked")
+		List<Payment> allPayments = query.list();
 		session.close();
 		for (int i = 0; i < allPayments.size(); i++) {
 			Payment order = (Payment) allPayments.get(i);
